@@ -1,4 +1,3 @@
-# schemas.py
 from pydantic import BaseModel
 
 class ProdutoBase(BaseModel):
@@ -7,10 +6,24 @@ class ProdutoBase(BaseModel):
     quantidade: int
 
 class ProdutoCreate(ProdutoBase):
- pass
+    pass
 
 class ProdutoResponse(ProdutoBase):
     id: int
-    
-class Config:
-    from_attributes = True
+
+    class Config:
+        from_attributes = True
+
+# Exercicio--------------------------------------------
+class LivroBase(BaseModel):
+    titulo: str
+    autor: str
+    ano_publicacao: str
+    preco: float
+
+class LivroCreate(LivroBase):
+    pass
+
+class LivroResponse(LivroBase):
+    id: int
+

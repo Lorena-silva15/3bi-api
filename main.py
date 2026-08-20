@@ -3,8 +3,11 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import Base, engine, get_db
 from models import ProdutoDB
+from models import LivroDB
 from schemas import ProdutoCreate, ProdutoResponse
+from schemas import LivroCreate, LivroResponse
 from fastapi.middleware.cors import CORSMiddleware
+from typing import List
 
 
 
@@ -65,3 +68,46 @@ def atualizar_produto(produto_id: int, dados: ProdutoCreate, db:
      db.commit()
      db.refresh(produto)
      return produto
+
+
+# Exercicio----------------------------------------------------------------------------------------------
+
+@app.get('/livros', response_model=List[LivroResponse])
+def listar_livros(db: Session = Depends(get_db)):
+     return db.query(LivroDB).all()
+
+
+@app.post('/livros', response_model=LivroResponse, status_code=201)
+def criar_livro(livro:LivroCreate, db: Session = Depends(get_db)):
+    novo_livro = LivroDB(**livro.dict())
+    db.add(novo_livro)
+    db.commit()
+    db.refresh(novo_livro)
+    return novo_livro
+
+
+# DELETE /produtos/{id} -> remove um produto do banco de dados
+@app.delete('/livros/{livros_id}', status_code=204)
+def remover_livros(livros_id: int, db: Session = Depends(get_db)):
+     livros= db.query(LivroDB).filter(LivroDB.id ==livros_id).first()
+     if livros is None:
+       raise HTTPException(status_code=404, detail='Livro não encontrado')
+     db.delete(livros)
+     db.commit()
+     return('Livro Excluido')
+
+# PUT /produtos/{id} -> atualiza um produto existente no banco
+@app.put('/produtos/{livros_id}', response_model=LivroResponse)
+def atualizar_produto(produto_id: int, dados: LivroCreate, db:
+     Session = Depends(get_db)):
+     livros = db.query(LivroDB).filter(LivroDB.id ==livros_id).first()
+     if livros is None:
+          raise HTTPException(status_code=404, detail='Livro não encontrado')
+     livros.titulo = dados.titulo
+     livros.autor = dados.autor
+     livros.ano_publicacao = dados.ano_publicacao
+     livros.preco = dados.preco
+     
+     db.commit()
+     db.refresh(livros)
+     return livros
