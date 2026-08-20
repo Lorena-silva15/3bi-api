@@ -72,12 +72,22 @@ def atualizar_produto(produto_id: int, dados: ProdutoCreate, db:
 
 # Exercicio----------------------------------------------------------------------------------------------
 
-@app.get('/livros', response_model=List[LivroResponse])
-def listar_livros(db: Session = Depends(get_db)):
+@app.get('/livro', response_model=List[LivroResponse])
+def listar_livro(db: Session = Depends(get_db)):
      return db.query(LivroDB).all()
 
 
-@app.post('/livros', response_model=LivroResponse, status_code=201)
+
+# GET /produtos/{id} -> retorna um único produto pelo id
+@app.get('/livro/{livro_id}', response_model=LivroResponse)
+def obter_livro(livro_id: int, db: Session = Depends(get_db)):
+     livro = db.query(LivroDB).filter(LivroDB.id == livro_id).first()
+     if livro is None:
+          raise HTTPException(status_code=404, detail='Livro não encontrado')
+     return livro
+
+
+@app.post('/livro', response_model=LivroResponse, status_code=201)
 def criar_livro(livro:LivroCreate, db: Session = Depends(get_db)):
     novo_livro = LivroDB(**livro.dict())
     db.add(novo_livro)
@@ -86,28 +96,28 @@ def criar_livro(livro:LivroCreate, db: Session = Depends(get_db)):
     return novo_livro
 
 
-# DELETE /produtos/{id} -> remove um produto do banco de dados
-@app.delete('/livros/{livros_id}', status_code=204)
-def remover_livros(livros_id: int, db: Session = Depends(get_db)):
-     livros= db.query(LivroDB).filter(LivroDB.id ==livros_id).first()
-     if livros is None:
+# DELETE /livro/{id} -> remove um livro do banco de dados
+@app.delete('/livro/{livro_id}', status_code=204)
+def remover_livro(livro_id: int, db: Session = Depends(get_db)):
+     livro= db.query(LivroDB).filter(LivroDB.id ==livro_id).first()
+     if livro is None:
        raise HTTPException(status_code=404, detail='Livro não encontrado')
-     db.delete(livros)
+     db.delete(livro)
      db.commit()
      return('Livro Excluido')
 
-# PUT /produtos/{id} -> atualiza um produto existente no banco
-@app.put('/produtos/{livros_id}', response_model=LivroResponse)
-def atualizar_produto(produto_id: int, dados: LivroCreate, db:
-     Session = Depends(get_db)):
-     livros = db.query(LivroDB).filter(LivroDB.id ==livros_id).first()
-     if livros is None:
-          raise HTTPException(status_code=404, detail='Livro não encontrado')
-     livros.titulo = dados.titulo
-     livros.autor = dados.autor
-     livros.ano_publicacao = dados.ano_publicacao
-     livros.preco = dados.preco
-     
-     db.commit()
-     db.refresh(livros)
-     return livros
+# PUT /livro/{id} -> atualiza um livro existente no banco
+@app.put('/livro/{livro_id}', response_model=LivroResponse)
+def atualizar_livro(livro_id: int, dados: LivroCreate, db: Session = Depends(get_db)):
+    livro = db.query(LivroDB).filter(LivroDB.id == livro_id).first()
+    if livro is None:
+        raise HTTPException(status_code=404, detail='Livro não encontrado')
+    livro.titulo = dados.titulo
+    livro.autor = dados.autor
+    livro.ano_publicacao = dados.ano_publicacao
+    livro.preco = dados.preco
+    
+    db.commit()
+    db.refresh(livro)
+    
+    return livro

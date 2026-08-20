@@ -12,9 +12,9 @@ class ProdutoDB(Base):
 
     #----------------------------------------------
 class LivroDB(Base):
-    __tablename__ = 'livros'
+    __tablename__ = 'livro'
     id = Column(Integer, primary_key=True, index=True)
     titulo = Column(String(100), nullable=False)
     autor = Column(String(100), nullable=False)
-    ano_publicacao = Column(String(10), nullable=False)
+    ano_publicacao = Column(String(15), nullable=False)
     preco = Column(Integer, nullable=False)
