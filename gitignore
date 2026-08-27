@@ -1,6 +1,6 @@
 
 _pycache_
-.pytest_cahche
+.pytest_cache
 .env
 .venv
 htmlcov/
