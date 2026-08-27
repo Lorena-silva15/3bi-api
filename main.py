@@ -11,8 +11,11 @@ from typing import List
 
 
 
-Base.metadata.create_all(bind=engine) # cria as tabelas, se ainda não existirem
 app = FastAPI()
+
+@app.on_event("startup")
+def criar_tabelas():
+    Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
  CORSMiddleware,

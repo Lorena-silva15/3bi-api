@@ -1,0 +1,9 @@
+
+_pycache_
+.pytest_cahche
+.env
+.venv
+htmlcov/
+.coverage
+relatorio.html
+resultado.xml
